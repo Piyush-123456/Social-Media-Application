@@ -9,6 +9,9 @@ const passport = require("passport");
 const userCollection = require("./models/userschema");
 var indexRouter = require('./routes/index.routes');
 var usersRouter = require('./routes/user.routes');
+var postsRouter = require('./routes/post.routes');
+
+
 const fileUpload = require('express-fileupload')
 require('./models/dbconnection').connectDB();
 var app = express();
@@ -45,7 +48,7 @@ passport.deserializeUser(userCollection.deserializeUser());
 
 app.use('/', indexRouter);
 app.use('/user', usersRouter);
-
+app.use('/post',postsRouter)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

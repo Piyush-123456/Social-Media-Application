@@ -1,23 +1,24 @@
 <%-include('partials/header')%>
     <%-include('partials/nav')%>
         <div class="w-[80%] mx-auto p-10 ">
-            <img src="<%=user.image%>" alt="">
+            <a class="mt-5" href="/user/reset-password">
+                reset-password
+            </a>
+            <a href="/user/delete-user/<%=user._id%>">
+                Delete user
+            </a>
+            <img class="w-[40%]" src="<%=user.image.url%>" alt="">
             <form class="" action="/user/avatar/<%=user._id%>" method="post" enctype="multipart/form-data">
                 <input type="file" name="image">
                 <button class="bg-red-300" type="submit">Submit</button>
             </form>
-            <form class="text-1xl m-auto w-1/2" action="" method="post">
+            <form class="text-1xl m-auto w-1/2" action="/user/update-user/<%= user._id%>" method="post">
                 <input class="w-full mb-5 border p-3 rounded" type="email" placeholder="example@email.com"
                     value="<%=user.email%>" name="email">
                 <input class="w-full mb-5 border p-3 rounded" type="text" placeholder="username"
                     value="<%=user.username%>" name="username">
-                <input class=" mb-5  w-full border p-3 rounded" type="password" placeholder="********"
-                    value="<%=user.password%>" name="password">
+
                 <button class="bg-red-300 p-5" type="submit">Update</button>
             </form>
         </div>
         <%- include('partials/footer')%>
-
-            <script>
-
-            </script>

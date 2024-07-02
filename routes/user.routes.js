@@ -86,16 +86,61 @@ router.get("/settings", (req, res, next) => {
 
 router.post("/avatar/:id", async (req, res, next) => {
     try {
-        const result = await imagekit.upload({
+        const { fileId, url, thumbnailUrl } = await imagekit.upload({
             file: req.files.image.data,
             fileName: req.files.image.name
-        })
-        console.log(result);
+        });
+        if (req.user.image.fileId) {
+            await imagekit.deleteFile(req.user.image.fileId);
+        }
+        req.user.image = { fileId, url, thumbnailUrl };
+        await req.user.save();
         res.redirect("/user/settings");
     }
     catch (err) {
         console.log(err.message);
         res.send(err.message);
     }
+})
+
+router.post('/update-user/:id', async (req, res, next) => {
+    try {
+        const data = await userCollection.findByIdAndUpdate(req.params.id, req.body);
+        await data.save();
+        res.redirect("/user/settings");
+    }
+    catch (err) {
+        console.log(err.message);
+    }
+})
+
+router.get("/reset-password", (req, res, next) => {
+    res.render("reset-password", { user: req.user });
+})
+
+router.post("/reset-password", async (req, res, next) => {
+    try {
+        await req.user.changePassword(req.body.oldpassword, req.body.newpassword);
+        await req.user.save();
+        res.redirect("/user/settings")
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
+
+router.get("/delete-user/:id", async (req, res, next) => {
+    try {
+        await imagekit.deleteFile(user.image.fileId);
+        await userCollection.findByIdAndDelete(req.params.id);
+        res.redirect("/login");
+    }
+    catch (err) {
+        console.log(err.message);
+    }
+})
+
+router.post('', (req, res, next) => {
+    
 })
 module.exports = router;

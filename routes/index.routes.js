@@ -1,9 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
+const PostCollection = require("../models/posts")
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('home', { user: req.user });
+router.get('/', async function (req, res, next) {
+  try {
+    var post = await PostCollection.find();
+  }
+  catch (err) {
+    console.log(err.message);
+  }
+  res.render('home', { user: req.user, post: post });
 });
 
 router.get("/about", (req, res, next) => {
