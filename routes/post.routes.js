@@ -4,6 +4,15 @@ const { isLoggedIn } = require("../middleware/auth")
 const router = express.Router();
 const imagekit = require("../utils/imagekit")
 
+router.get("/", (req, res, next) => {
+    console.log(PostCollection.populate("user"));
+    res.redirect("/post/create")
+})
+
+router.get("/create", isLoggedIn, (req, res, next) => {
+    res.render("create", { user: req.user })
+})
+
 router.post('/create', isLoggedIn, async (req, res, next) => {
 
     try {
@@ -27,5 +36,23 @@ router.post('/create', isLoggedIn, async (req, res, next) => {
     }
 })
 
+
+router.get("/like/:pid", async (req, res, next) => {
+    try {
+        const post = await PostCollection.findById(req.params.pid);
+        if (post.likes.includes(req.user._id)) {
+            const uidx = post.likes.indexOf(req.user._id);
+            post.likes.splice(uidx, 1);
+        } else {
+            post.likes.push(req.user._id);
+        }
+
+        await post.save();
+        res.redirect("/user/profile");
+    } catch (error) {
+        console.log(error);
+        res.send(error.message);
+    }
+})
 
 module.exports = router;

@@ -7,4 +7,19 @@
                 Logout
             </a>
         </button>
-        <%- include("partials/footer") %>
+
+            <ul>
+                <% posts.forEach((elem)=>{%>
+                    <li>
+                        <h1>Post <%= elem.title %>
+                        </h1>
+                        <img src="<%=elem.media.thumbnailUrl%>" alt="">
+                        <a href="/post/like/<%=elem._id%>">
+                            <%= elem.likes.length%>
+                            like
+                        </a>
+                    </li>
+                 <%   })%>
+            </ul>
+
+            <%- include("partials/footer") %>

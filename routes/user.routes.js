@@ -7,6 +7,7 @@ const path = require("path");
 const imagekit = require("../utils/imagekit");
 const userCollection = require("../models/userschema");
 const { sendMail } = require("../utils/nodemailer");
+const PostCollection = require('../models/posts');
 passport.use(new LocalStategy(userCollection.authenticate()));
 
 
@@ -29,8 +30,15 @@ router.post("/login", passport.authenticate("local", {
 
 })
 
-router.get("/profile", isLoggedIn, (req, res, next) => {
-    res.render("profile", { user: req.user });
+router.get("/profile", isLoggedIn, async (req, res, next) => {
+    try {
+        const post = await PostCollection.find().populate("user");
+        console.log(post);
+        res.render("profile", { user: req.user, posts: post });
+    }
+    catch (err) {
+        console.log(err.message);
+    }
 });
 
 router.get("/logout", isLoggedIn, (req, res, next) => {
@@ -79,8 +87,14 @@ router.post("/verify-otp/:id", async (req, res, next) => {
 })
 
 
-router.get("/settings", (req, res, next) => {
-    res.render("settings", { user: req.user });
+router.get("/settings", async (req, res, next) => {
+    try {
+        const userAndPosts = await req.user.populate("posts");
+        res.render("settings", { user: userAndPosts });
+    }
+    catch (Err) {
+        console.log(Err.message);
+    }
 })
 
 
@@ -140,7 +154,5 @@ router.get("/delete-user/:id", async (req, res, next) => {
     }
 })
 
-router.post('', (req, res, next) => {
-    
-})
+
 module.exports = router;
